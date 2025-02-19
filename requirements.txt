@@ -2,7 +2,7 @@ absl-py==1.0.0
 appdirs==1.4.4
 asgiref==3.5.0
 astunparse==1.6.3
-pip install --upgrade audioread
+
 pip freeze > requirements.txt
 
 boto3==1.20.52
@@ -43,7 +43,8 @@ numpy==1.21.5
 oauthlib==3.2.0
 opencv-python==4.5.5.62
 opt-einsum==3.3.0
-packaging==21.3
+package_name==version_number
+
 pandas==1.4.0
 Pillow==9.0.1
 pooch==1.6.0
@@ -64,7 +65,10 @@ s3transfer==0.5.1
 scikit-learn==0.24.1
 scipy==1.7.3
 six==1.16.0
-sqlparse==0.4.2
+git add requirements.txt
+git commit -m "Fixed requirements.txt"
+git push origin main
+
 tensorboard==2.8.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.1
