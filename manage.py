@@ -1,22 +1,36 @@
-#!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
-import os
-import sys
+import streamlit as st
+import requests
 
+# Backend API URL (Change if your Django app is hosted online)
+BASE_URL = "http://127.0.0.1:8000"
 
-def main():
-    """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'checkup.settings')
-    try:
-        from django.core.management import execute_from_command_line
-    except ImportError as exc:
-        raise ImportError(
-            "Couldn't import Django. Are you sure it's installed and "
-            "available on your PYTHONPATH environment variable? Did you "
-            "forget to activate a virtual environment?"
-        ) from exc
-    execute_from_command_line(sys.argv)
+# Page title
+st.title("Doctor Appointment Booking System")
 
+# Fetch doctors from Django API
+st.subheader("Select a Doctor")
+doctors_response = requests.get(f"{BASE_URL}/doctors/")
 
-if __name__ == '__main__':
-    main()
+if doctors_response.status_code == 200:
+    doctors = doctors_response.json()
+    doctor_dict = {doc["name"]: doc["id"] for doc in doctors}
+    selected_doctor = st.selectbox("Choose a doctor:", list(doctor_dict.keys()))
+
+    # Fetch timeslots for selected doctor
+    if selected_doctor:
+        doctor_id = doctor_dict[selected_doctor]
+        timeslots_response = requests.get(f"{BASE_URL}/timeslots/{doctor_id}/")
+        
+        if timeslots_response.status_code == 200:
+            timeslots = timeslots_response.json()
+            if timeslots:
+                selected_timeslot = st.selectbox("Choose a timeslot:", [t["datetimeslot"] for t in timeslots])
+                
+                if st.button("Book Appointment"):
+                    st.success(f"Appointment booked with Dr. {selected_doctor} at {selected_timeslot}")
+            else:
+                st.warning("No available timeslots.")
+        else:
+            st.error("Failed to fetch timeslots.")
+else:
+    st.error("Failed to fetch doctors.")
